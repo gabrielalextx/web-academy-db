@@ -1,0 +1,32 @@
+{
+  "name": "web-academy-db",
+  "version": "1.0.0",
+  "description": "Repositório para manutenção das atividades de BD em equipe.",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielalextx/web-academy-db.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabrielalextx/web-academy-db/issues"
+  },
+  "homepage": "https://github.com/gabrielalextx/web-academy-db#readme",
+  "devDependencies": {
+    "@types/node": "^26.0.1",
+    "nodemon": "^3.1.14",
+    "prisma": "^7.8.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@prisma/adapter-mariadb": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2"
+  }
+}

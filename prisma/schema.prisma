@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Cliente {
+  idCliente       Int        @id @default(autoincrement()) @map("id_cliente")
+  nomeCompleto   String     @map("nome_completo") @db.VarChar(150)
+  cpf            String     @unique @db.VarChar(14)
+  celular        String?    @db.VarChar(20)
+  email          String     @unique @db.VarChar(120)
+  dataNascimento DateTime?  @map("data_nascimento") @db.Date
+
+  enderecos      Endereco[]
+  compras        Compra[]
+
+  @@map("cliente")
+}
+
+model Endereco {
+  idEndereco Int    @id @default(autoincrement()) @map("id_endereco")
+  cep        String @db.VarChar(10)
+  logradouro String @db.VarChar(150)
+  numero     String @db.VarChar(20)
+  cidade     String @db.VarChar(100)
+  estado     String @db.Char(2)
+
+  idCliente  Int     @map("id_cliente")
+  cliente    Cliente @relation(fields: [idCliente], references: [idCliente])
+
+  compras    Compra[]
+
+  @@map("endereco")
+}
+
+model Categoria {
+  idCategoria Int    @id @default(autoincrement()) @map("id_categoria")
+  nome        String @db.VarChar(100)
+
+  subcategorias Subcategoria[]
+
+  @@map("categoria")
+}
+
+model Subcategoria {
+  idSubcategoria Int    @id @default(autoincrement()) @map("id_subcategoria")
+  nome           String @db.VarChar(100)
+
+  idCategoria    Int       @map("id_categoria")
+  categoria      Categoria @relation(fields: [idCategoria], references: [idCategoria])
+
+  produtos       Produto[]
+
+  @@map("subcategoria")
+}
+
+model Produto {
+  idProduto              Int     @id @default(autoincrement()) @map("id_produto")
+  modelo                 String  @db.VarChar(120)
+  fabricante             String  @db.VarChar(120)
+  precoBase              Decimal @map("preco_base") @db.Decimal(10, 2)
+  quantidadeDisponivel   Int     @default(0) @map("quantidade_disponivel")
+
+  idSubcategoria         Int          @map("id_subcategoria")
+  subcategoria           Subcategoria @relation(fields: [idSubcategoria], references: [idSubcategoria])
+
+  numerosSerie           NumeroSerie[]
+  itensCompra            ItemCompra[]
+
+  @@map("produto")
+}
+
+model NumeroSerie {
+  idNumeroSerie Int    @id @default(autoincrement()) @map("id_numero_serie")
+  numeroSerie   String @unique @map("numero_serie") @db.VarChar(100)
+
+  idProduto     Int     @map("id_produto")
+  produto       Produto @relation(fields: [idProduto], references: [idProduto])
+
+  @@map("numero_serie")
+}
+
+model Compra {
+  idCompra       Int      @id @default(autoincrement()) @map("id_compra")
+  dataHora       DateTime @map("data_hora") @db.DateTime(0)
+  desconto       Decimal? @default(0.00) @db.Decimal(10, 2)
+  formaPagamento String   @map("forma_pagamento") @db.VarChar(50)
+  totalCompra    Decimal  @map("total_compra") @db.Decimal(10, 2)
+
+  idCliente      Int      @map("id_cliente")
+  idEndereco     Int      @map("id_endereco")
+
+  cliente        Cliente  @relation(fields: [idCliente], references: [idCliente])
+  endereco       Endereco @relation(fields: [idEndereco], references: [idEndereco])
+
+  itensCompra    ItemCompra[]
+
+  @@map("compra")
+}
+
+model ItemCompra {
+  idItemCompra Int     @id @default(autoincrement()) @map("id_item_compra")
+  quantidade   Int
+  precoUnitario Decimal @map("preco_unitario") @db.Decimal(10, 2)
+  subtotal     Decimal @db.Decimal(10, 2)
+
+  idCompra     Int     @map("id_compra")
+  idProduto    Int     @map("id_produto")
+
+  compra       Compra  @relation(fields: [idCompra], references: [idCompra])
+  produto      Produto @relation(fields: [idProduto], references: [idProduto])
+
+  @@map("item_compra")
+}
